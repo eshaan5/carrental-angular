@@ -1,0 +1,182 @@
+body {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60vw;
+  margin: auto;
+  padding: 20px;
+}
+
+.header {
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  height: 70px;
+  width: 70px;
+}
+
+.title {
+  margin-left: 10px;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-item a {
+  text-decoration: none;
+  color: #000;
+}
+
+.signin-button a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.signin-button {
+  background-color: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.account-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.heading-section {
+  margin: 20px 0;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 40vw;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.input-container {
+  position: relative;
+}
+
+input {
+  height: 40px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.continue-button {
+  background-color: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  color: #fff;
+  text-decoration: none;
+}
+
+.name {
+  display: flex;
+  justify-content: space-between;
+}
+
+.signup-button button {
+  color: #000;
+  text-decoration: none;
+  border: none;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+
+
+.form-section {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.form-field {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-container {
+  position: relative;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+.continue-button button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.continue-button button:hover {
+  background-color: #45a049;
+}

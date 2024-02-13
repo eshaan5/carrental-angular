@@ -1,24 +1,42 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <form class="login-form">
-        <h2>Login</h2>
-        <!-- Login form content goes here -->
-        <!-- views/login.html -->
-        <form class="login-form">
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" placeholder="Enter your username" />
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter your password" />
-          </div>
-          <button type="submit" class="btn btn-primary btn-block">Login</button>
-        </form>
+<head>
+  <link rel="stylesheet" href="../css/login.css" />
+</head>
 
-        <button class="btn btn-default" style="margin-top: 2rem;" ng-click="goToSignup()">First time here? Register</button>
-      </form>
+<div class="container">
+  <div class="header">
+    <img src="/assets/logo.jpg" alt="refresh" class="icon" />
+    <div class="title">
+      <h1>Car Rental</h1>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="welcome-section">
+      <h2>Welcome to Car Rental</h2>
+    </div>
+
+    <form name="loginForm" class="form-section" ng-controller="LoginController" ng-submit="login()">
+      <div class="form-field">
+        <label for="email">Email or Username</label>
+        <input type="text" ng-model="formData.user" name="user" id="email" placeholder="Email" />
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input type="password" ng-model="formData.password" name="password" id="password" placeholder="Password" />
+      </div>
+
+      <button type="submit" class="login-button">
+        Log In
+      </button>
+    </form>
+
+    <div class="new-user">
+      <p>New to Car Rental?</p>
+    </div>
+
+    <div class="signup-button">
+      <button ng-click="goToSignup()">Sign up</button>
     </div>
   </div>
 </div>

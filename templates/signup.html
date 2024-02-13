@@ -1,44 +1,82 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/signup.css" />
+  <title>CarRent</title>
+</head>
 <div class="container">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-3">
-      <form class="signup-form">
-        <h2>Signup</h2>
-        <!-- Signup form content goes here -->
-        <!-- views/signup.html -->
-        <form class="signup-form">
-          <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" class="form-control" id="firstName" placeholder="Enter your first name" />
+  <header class="header">
+    <div class="logo">
+      <img src="../assets/logo.jpg" alt="grid" class="icon" />
+      <div class="title">
+        <h1>CarRental</h1>
+      </div>
+    </div>
+  </header>
+  <div class="content">
+    <div class="heading-section">
+      <h2>Let's get started</h2>
+    </div>
+    <form name="signupForm" class="form-section" ng-controller="SignupController" ng-submit="submitForm()">
+      <div class="name">
+        <div class="form-field">
+          <label for="firstName">First name</label>
+          <div class="input-container">
+            <input type="text" id="firstName" placeholder="First name" ng-model="formData.firstName" name="fname" ng-pattern="/^[a-zA-Z]+$/" required />
+            <p class="error-message" ng-show="signupForm.fname.$error.pattern && signupForm.fname.$dirty">First name should only contain letters.</p>
           </div>
-          <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" class="form-control" id="lastName" placeholder="Enter your last name" />
+        </div>
+        <div class="form-field">
+          <label for="lastName">Last name</label>
+          <div class="input-container">
+            <input type="text" id="lastName" placeholder="Last name" ng-model="formData.lastName" name="lname" ng-pattern="/^[a-zA-Z]+$/" required />
+            <p class="error-message" ng-show="signupForm.lname.$error.pattern && signupForm.lname.$dirty">Last name should only contain letters.</p>
           </div>
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter your email address" />
-          </div>
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" class="form-control" placeholder="Enter your username" ng-model="signupData.username" required />
-          </div>
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" />
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter your password" />
-          </div>
-          <div class="form-group">
-            <label for="confirmPassword">Confirm Password</label>
-            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" />
-          </div>
-          <button type="submit" class="btn btn-primary btn-block">Signup</button>
-        </form>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="email">Email</label>
+        <div class="input-container">
+          <input type="email" id="email" placeholder="Email" ng-model="formData.email" name="email" ng-pattern="/^[a-zA-Z\d][^\s@]+@[^\s@]+\.[a-zA-Z]+$/" required />
+          <p class="error-message" ng-show="signupForm.email.$error.pattern && signupForm.email.$dirty">Invalid email address.</p>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="username">Username</label>
+        <div class="input-container">
+          <input type="text" id="username" placeholder="Username" ng-model="formData.username" name="username" required />
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="phoneNumber">Phone number</label>
+        <div class="input-container">
+          <input type="text" id="phoneNumber" placeholder="Phone number" ng-model="formData.phoneNumber" name="phoneNumber" ng-pattern="/^\d{10}$/" required />
+          <p class="error-message" ng-show="signupForm.phoneNumber.$error.pattern && signupForm.phoneNumber.$dirty">Invalid phone number. Please enter a 10-digit number.</p>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="password">Password</label>
+        <div class="input-container">
+          <input type="password" id="password" placeholder="Password" ng-model="formData.password" required name="password" ng-pattern="/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+<>?])[A-Za-z\d!@#$%^&*()_+<>?]{8,}$/" />
+          <p class="error-message" ng-show="signupForm.password.$error.pattern && signupForm.password.$dirty">Password should contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number and one special character.</p>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="confirmPassword">Confirm password</label>
+        <div class="input-container">
+          <input type="password" id="confirmPassword" placeholder="Confirm password" ng-model="confirmPassword" name="confirmPassword" ng-change="confirm()" required />
+          <p class="error-message" ng-show="!arePasswordsEqual">Passwords do not match.</p>
+        </div>
+      </div>
+      <button class="continue-button" type="submit">Sign Up</button>
+    </form>
 
-        <button class="btn btn-default" style="margin-top: 2rem" ng-click="goToLogin()">Already a User? Login</button>
-      </form>
+    <div class="new-user">
+      <p>Already Registered?</p>
+    </div>
+
+    <div class="signup-button">
+      <button ng-click="goToLogin()">Login</button>
     </div>
   </div>
 </div>
