@@ -180,3 +180,19 @@ input {
 .continue-button button:hover {
   background-color: #45a049;
 }
+
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4caf50;
+  color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  z-index: 1;
+}
+
+/* #toast.show {
+  display: block;
+  animation: fadeOut 5s ease-in-out forwards;
+} */

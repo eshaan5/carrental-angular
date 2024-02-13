@@ -1,4 +1,4 @@
-app.controller("SignupController", function ($scope, $location) {
+app.controller("SignupController", function ($scope, $location, indexedDBService, $timeout) {
   // Controller logic for signup page
   $scope.goToLogin = function () {
     $location.path("/");
@@ -6,6 +6,13 @@ app.controller("SignupController", function ($scope, $location) {
   $scope.formData = {}; // Initialize form data object
   $scope.confirmPassword;
   $scope.arePasswordsEqual = true;
+  $scope.usernameExists = false;
+  $scope.show = false;
+
+  $scope.showToast = function () {
+    $scope.show = true;
+    console.log($scope.show);
+  };
 
   $scope.confirm = function () {
     if ($scope.formData.password !== $scope.confirmPassword) {
@@ -22,7 +29,30 @@ app.controller("SignupController", function ($scope, $location) {
     if ($scope.signupForm.$invalid) {
       return;
     }
-    console.log("Form data:", $scope.formData);
-    // You can perform further validation and submit data to backend API
+
+    indexedDBService
+      .getByKey($scope.formData.username, "users")
+      .then((user) => {
+        if (user) {
+          $scope.usernameExists = true;
+          return;
+        }
+
+        $scope.formData.registeredOn = new Date().toISOString().split("T")[0];
+        $scope.formData.logins = 0;
+
+        return indexedDBService.addToDB($scope.formData, "users", $scope.formData.username);
+      })
+      .then((user) => {
+        if (user) {
+          console.log("User added successfully:", user);
+          $scope.showToast();
+
+          // Use $timeout instead of setTimeout
+          $timeout(() => {
+            $scope.goToLogin();
+          }, 2000);
+        }
+      });
   };
 });
