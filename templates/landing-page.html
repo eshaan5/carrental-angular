@@ -1,0 +1,103 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/landing-page.css" />
+  <title>Luxcar</title>
+</head>
+<body ng-controller="landingPageController">
+  <header class="header">
+    <div class="logo">
+      <img src="/assets/logo.jpg" alt="vectorZero" class="logo-icon" />
+      <span class="logo-text">CarRental</span>
+    </div>
+    <nav class="nav">
+      <ul class="nav-list">
+        <li><a href="#">Rent</a></li>
+        <li><a href="#">Own</a></li>
+        <li><a href="#">Fleet</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+      <div class="auth-buttons">
+        <a href="#" class="sign-up-btn">Sign up</a>
+        <a href="#" class="log-in-btn">Log in</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="main-section">
+    <div id="availability-checker" class="hero-section">
+      <h2>Check Car Availability</h2>
+      <div class="dates">
+        <div class="input-container search-bar">
+          <div class="input-ele">
+            <label for="start-date">Start Date:</label>
+            <input class="search-input" type="date" id="start-date" ng-change="verifyDates()" ng-model="startDate" required />
+          </div>
+
+          <div class="input-ele">
+            <label for="end-date">End Date:</label>
+            <input class="search-input" type="date" id="end-date" ng-change="verifyDates()" ng-model="endDate" required />
+          </div>
+
+          <button class="search-btn" ng-click="checkCarAvailability()">Check Availability</button>
+        </div>
+        <p class="error-message" ng-show="dateError">Invalid dates.</p>
+      </div>
+    </div>
+
+    <div class="featured-cars">
+      <h2 class="section-title">Featured Cars</h2>
+      <div class="cars-section">
+        <div id="available-cars">
+          <div class="car-card" ng-repeat="car in availableCars">
+            <img ng-src="{{car.image}}" alt="{{car.name}}" />
+            <p><strong>Name:</strong> {{car.name}}</p>
+            <p><strong>Model:</strong> {{car.model}}</p>
+            <p><strong>Year:</strong> {{car.year}}</p>
+            <p><strong>Rent Amount:</strong> {{car.rentAmount}} per day</p>
+            <button ng-click="openRentNowModal(car)">Rent Now</button>
+          </div>
+          <p ng-if="availableCars.length === 0">No cars available for the selected period.</p>
+        </div>
+        <div id="car-pagination">
+          <button id="prev-page" ng-click="changePage(-1)" class="search-btn">Previous Page</button>
+          <span id="page-info">Page {{currentPage}} of {{maxPage}}</span>
+          <button id="next-page" ng-click="changePage(1)" class="search-btn">Next Page</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Rent Now -->
+    <div id="rent-now-modal" class="modal" ng-show="showRentModal">
+      <div class="modal-content">
+        <span class="close" ng-click="closeRentNowModal()">&times;</span>
+        <h2>Rent Now</h2>
+        <label for="rent-start-date">Start Date:</label>
+        <input type="date" id="rent-start-date" ng-model="rentStartDate" required />
+
+        <label for="rent-end-date">End Date:</label>
+        <input type="date" id="rent-end-date" ng-model="rentEndDate" required />
+        <p class="error-message" ng-show="availabilityError">Car is not available for the selected period.</p>
+
+        <p>Your Car: {{selectedCar.name}} {{selectedCar.model}}</p>
+        <p>Total Rent: {{totalRent}}</p>
+
+        <button ng-click="confirmRentNow()">Rent Now</button>
+      </div>
+    </div>
+
+    <div id="password-toast" class="toast" ng-show="showPasswordToast">
+      <div class="toast-body">Rent confirmed!</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Contact Us</a>
+    </div>
+    <img src="images/img_depth5frame1.svg" alt="depth5frameOne" class="footer-logo" />
+    <p class="copyright">© 2022 Luxcar, Inc</p>
+  </footer>
+</body>

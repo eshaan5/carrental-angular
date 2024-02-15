@@ -1,0 +1,47 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../css/add-car.css" />
+</head>
+<div class="container">
+  <div class="header">
+    <h1>Add a new car</h1>
+    <p>Provide the details of your car to get started.</p>
+  </div>
+  <form name="addCar" class="form" ng-submit="submitForm()">
+    <div class="form-group">
+      <label for="carName">Car Name</label>
+      <input type="text" name="carName" ng-pattern="/^[a-zA-Z]+$/" id="carName" ng-model="formData.carName" placeholder="Enter car name" required />
+      <p class="error-message" ng-show="addCar.carName.$error.pattern && addCar.carName.$dirty">Enter valid name.</p>
+    </div>
+    <div class="form-group">
+      <label for="carModel">Car Model</label>
+      <input type="text" name="carModel" ng-pattern="/^[a-zA-Z]+$/" id="carModel" ng-model="formData.carModel" placeholder="Enter car model" required />
+      <p class="error-message" ng-show="addCar.carModel.$error.pattern && addCar.carModel.$dirty">Enter valid model.</p>
+    </div>
+    <div class="form-group">
+      <label for="carYear">Car Year</label>
+      <input type="text" name="carYear" ng-pattern="/^\d{4}$/" id="carYear" ng-model="formData.carYear" placeholder="Enter car year" required />
+      <p class="error-message" ng-show="addCar.carYear.$error.pattern && addCar.carYear.$dirty">Enter valid year.</p>
+    </div>
+    <div class="form-group">
+      <label for="carImage">Upload car image</label>
+      <input type="file" id="carImage" onchange="angular.element(this).scope().uploadImage(this.files)" required />
+    </div>
+    <div class="form-group">
+      <label for="rentAmount">Rent Amount</label>
+      <input type="text" name="rentAmount" ng-pattern="/^\d{1,5}$/" id="rentAmount" ng-model="formData.rentAmount" placeholder="Enter rent amount" required />
+      <p class="error-message" ng-show="addCar.rentAmount.$error.pattern && addCar.rentAmount.$dirty">Enter valid amount.</p>
+    </div>
+    <div class="form-group">
+      <label for="number">Car Number Plate</label>
+      <input type="text" name="number" ng-pattern="/^[A-Z0-9]+$/" id="number" ng-model="formData.number" placeholder="Enter car number plate" required />
+      <p class="error-message" ng-show="addCar.number.$error.pattern && addCar.number.$dirty">Enter valid number plate.</p>
+    </div>
+    <button class="add-car-btn" type="submit">Add Car</button>
+    <p class="error-message" ng-show="plateNumberExists">A car with the same number already exists!</p>
+  </form>
+  <div id="toast" ng-show="show" class="toast">
+    <div class="toast-body">Car added successfully!</div>
+  </div>
+</div>

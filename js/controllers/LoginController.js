@@ -1,6 +1,15 @@
 app.controller("LoginController", function ($scope, $location, indexedDBService) {
   indexedDBService.checkObject();
 
+  $scope.user = localStorage.getItem("currentUser");
+  if ($scope.user) {
+    if ($scope.user === "admin") {
+      $location.path("/admin");
+    } else {
+      $location.path("/landingPage");
+    }
+  }
+
   // Controller logic for login page
   $scope.goToSignup = function () {
     $location.path("/signup");

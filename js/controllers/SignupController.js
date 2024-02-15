@@ -46,12 +46,15 @@ app.controller("SignupController", function ($scope, $location, indexedDBService
       .then((user) => {
         if (user) {
           console.log("User added successfully:", user);
-          $scope.showToast();
+          $timeout(function () {
+            $scope.show = true;
+            $scope.$apply();
+          }, 200);
 
           // Use $timeout instead of setTimeout
-          $timeout(() => {
-            $scope.goToLogin();
-          }, 2000);
+          // $timeout(() => {
+          //   $scope.goToLogin();
+          // }, 2000);
         }
       });
   };
