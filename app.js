@@ -5,19 +5,19 @@ app.config([
   function ($routeProvider) {
     $routeProvider
       .when("/", {
-        templateUrl: "templates/login.html",
+        templateUrl: "./login/login.html",
         controller: "LoginController",
       })
       .when("/signup", {
-        templateUrl: "templates/signup.html",
+        templateUrl: "/signup/signup.html",
         controller: "SignupController",
       })
       .when("/landingPage", {
-        templateUrl: "templates/landing-page.html",
+        templateUrl: "/landingPage/landing-page.html",
         controller: "landingPageController",
       })
       .when("/addCar", {
-        templateUrl: "templates/add-car.html",
+        templateUrl: "addCar/add-car.html",
         controller: "addCarController",
       })
       .otherwise({
