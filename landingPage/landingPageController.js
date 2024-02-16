@@ -1,15 +1,16 @@
-app.controller("landingPageController", function ($scope, indexedDBService, verifyDateFactory) {
+app.controller("landingPageController", function ($scope, indexedDBService, DatesService, CarAvailabilityService) {
   // Initialization
   $scope.dateError = false;
   $scope.availableCars = [];
   $scope.showRentModal = false;
   $scope.currentPage = 1;
-  $scope.carsPerPage = 5;
+  $scope.carsPerPage = 1;
   $scope.startDate = new Date();
-  $scope.endDate = verifyDateFactory.tomorrowsDate();
+  $scope.endDate = DatesService.tomorrowsDate();
+  $scope.maxPage = 1;
 
   $scope.verifyDates = function () {
-    $scope.dateError = verifyDateFactory.verifyDate($scope.startDate, $scope.endDate, new Date());
+    $scope.dateError = DatesService.verifyDate($scope.startDate, $scope.endDate, new Date());
   };
 
   $scope.checkCarAvailability = function () {
@@ -22,10 +23,11 @@ app.controller("landingPageController", function ($scope, indexedDBService, veri
     indexedDBService
       .getAllDocuments("cars")
       .then(function (cars) {
-        return getAvailableCars(cars, $scope.startDate, $scope.endDate);
+        return CarAvailabilityService.getAvailableCars(cars, $scope.startDate, $scope.endDate);
       })
       .then(function (availableCars) {
         $scope.availableCars = availableCars;
+        $scope.maxPage = Math.ceil($scope.availableCars.length / $scope.carsPerPage);
       });
   };
 
@@ -34,12 +36,11 @@ app.controller("landingPageController", function ($scope, indexedDBService, veri
     if ($scope.currentPage < 1) {
       $scope.currentPage = 1;
     } else {
-      var maxPage = Math.ceil($scope.availableCars.length / $scope.carsPerPage);
-      if ($scope.currentPage > maxPage) {
-        $scope.currentPage = maxPage;
+      $scope.maxPage = Math.ceil($scope.availableCars.length / $scope.carsPerPage);
+      if ($scope.currentPage > $scope.maxPage) {
+        $scope.currentPage = $scope.maxPage;
       }
     }
-    displayAvailableCars(getAvailableCars($scope.startDate, $scope.endDate));
   };
 
   $scope.openRentNowModal = function (car) {
@@ -49,7 +50,7 @@ app.controller("landingPageController", function ($scope, indexedDBService, veri
     $scope.selectedCar = car;
     $scope.rentAmount = car.rentAmount;
 
-    updateRent();
+    $scope.updateRent();
     $scope.showRentModal = true;
   };
 
@@ -58,63 +59,32 @@ app.controller("landingPageController", function ($scope, indexedDBService, veri
   };
 
   $scope.confirmRentNow = function () {
-    var username = localStorage.getItem("currentUser");
+    var user = JSON.parse(localStorage.getItem("currentUser"));
 
-    if (!username) {
+    if (!user) {
       // Handle the case where the username is not available
       alert("Error: User not logged in");
       return;
     }
 
     var bookingObject = {
-      id: generateUUID(),
+      id: 1,
       startDate: $scope.rentStartDate,
       endDate: $scope.rentEndDate,
-      uid: username,
+      user: user,
+      uid: user.username,
       cid: $scope.selectedCar.number,
+      car: $scope.selectedCar,
       totalAmount: $scope.totalRent,
-      bookingDate: currentDate,
-      bookingTime: currentTime,
+      // bookingDate: currentDate,
+      // bookingTime: currentTime,
     };
 
-    // Update bookings array in IndexedDB
-    var newBookingId;
     indexedDBService
-      .addToDB(bookingObject, "bookings", bookingObject.id, "put")
+      .addToDB(bookingObject, "bookings", bookingObject.id)
       .then(function (bookingId) {
-        newBookingId = bookingId.id;
-        // Retrieve existing cars from IndexedDB
-        return indexedDBService.getByKey($scope.selectedCar.number, "cars");
-      })
-      .then(function (car) {
-        if (car) {
-          // Update bookings array in the selected car
-          car.bookings = car.bookings || [];
-          car.bookings.push(newBookingId);
-
-          return indexedDBService.addToDB(car, "cars", car.number, "put");
-        }
-      })
-      .then(function () {
-        // Retrieve existing users from IndexedDB
-        return indexedDBService.getByKey(username, "users");
-      })
-      .then(function (currentUser) {
-        if (currentUser) {
-          // Update bookings array in the user's profile
-          currentUser.bookings = currentUser.bookings || [];
-          currentUser.bookings.push(newBookingId);
-
-          return indexedDBService.addToDB(currentUser, "users", username, "put");
-        }
-      })
-      .then(function () {
-        // Close the modal after confirmation
-        $scope.closeRentNowModal();
-
-        // Display a success message or perform any additional actions
         $scope.showPasswordToast = true;
-        return showPasswordToast();
+        $scope.closeRentNowModal();
       })
       .then(function () {
         window.location.href = "#/bookings";
@@ -127,31 +97,29 @@ app.controller("landingPageController", function ($scope, indexedDBService, veri
 
   $scope.updateRent = function () {
     // Check for the availability first
-    $scope.availabilityError = "";
+    $scope.availabilityError = false;
     $scope.totalRent = 0;
 
-    var startRentDate = $scope.rentStartDate;
-    var endRentDate = $scope.rentEndDate;
-
-    if (startRentDate < currentDate) {
-      $scope.availabilityError = "Start date should not be behind the current date.";
+    if ($scope.dateError) {
+      $scope.totalRent = 0
       return;
     }
 
-    if (startRentDate >= endRentDate) {
-      $scope.availabilityError = "Start date should not be greater than end date.";
-      return;
-    }
-
-    var isCarAvailable = checkCarAvailabilityForRent(startRentDate, endRentDate, $scope.selectedCar.number);
+    var isCarAvailable = CarAvailabilityService.checkCarAvailabilityForRent($scope.startDate, $scope.endDate, $scope.selectedCar.number);
 
     if (!isCarAvailable) {
-      $scope.availabilityError = "Car is not available for the selected period.";
+      $scope.availabilityError = true;
       return;
     }
 
     // Calculate total rent
-    $scope.totalRent = dateDiffInDays(endRentDate, startRentDate) * $scope.rentAmount;
+    $scope.totalRent = DatesService.dateDiffInDays($scope.endDate, $scope.startDate) * $scope.rentAmount;
+  };
+
+  $scope.onRentDateChange = function () {
+    $scope.verifyDates();
+    if (!$scope.dateError)
+    $scope.updateRent();
   };
 
   $scope.logout = function () {

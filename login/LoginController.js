@@ -1,7 +1,7 @@
 app.controller("LoginController", function ($scope, $location, indexedDBService) {
   indexedDBService.checkObject();
 
-  $scope.user = localStorage.getItem("currentUser");
+  $scope.user = JSON.parse(localStorage.getItem("currentUser"));
   if ($scope.user) {
     if ($scope.user === "admin") {
       $location.path("/admin");
@@ -33,7 +33,7 @@ app.controller("LoginController", function ($scope, $location, indexedDBService)
               $scope.loginFailed = false;
 
               // Store the current user's username in local storage
-              localStorage.setItem("currentUser", user.username);
+              localStorage.setItem("currentUser", JSON.stringify({ username: user.username, name: user.firstName + " " + user.lastName }));
 
               // Update login timestamp
               user.logins = user.logins + 1;

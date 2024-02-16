@@ -1,175 +1,217 @@
-// indexedDBService.js
-
-app.service("indexedDBService", function () {
-  // Function to check the IndexedDB database and create object stores if needed
+app.service("indexedDBService", function ($q) {
   this.checkObject = function () {
-    // Implementation...
+    var deferred = $q.defer();
     const request = indexedDB.open("carRental", 1);
 
     request.onerror = function (event) {
-      console.error("Error opening database:", event.target.error);
+      deferred.reject(event.target.error);
     };
 
     request.onsuccess = function (event) {
       const db = event.target.result;
       console.log("Database opened successfully");
-
-      // Perform any other operations you need with the opened database
+      deferred.resolve(db);
     };
 
     request.onupgradeneeded = function (event) {
       const db = event.target.result;
       console.log("upgrading database");
-      // Checking and creating objectStore for users
-      if (!db.objectStoreNames.contains("users")) {
-        const userStore = db.createObjectStore("users", { keyPath: "username" });
-        // Create indexes or additional configuration if needed
-        userStore.createIndex("id", "username", { unique: true });
-        userStore.createIndex("email", "email", { unique: true });
-      }
-
-      // Checking and creating objectStore for cars
-      if (!db.objectStoreNames.contains("cars")) {
-        const carStore = db.createObjectStore("cars", { keyPath: "number" });
-        carStore.createIndex("id", "number", { unique: true });
-      }
-
-      // Checking and creating objectStore for bookings
-      if (!db.objectStoreNames.contains("bookings")) {
-        const bookingStore = db.createObjectStore("bookings", {
-          keyPath: "id",
-        });
-        bookingStore.createIndex("id", "id", { unique: true });
-        bookingStore.createIndex("uid", "uid", { unique: false });
-        bookingStore.createIndex("cid", "cid", { unique: false });
-      }
+      createObjectStores(db)
+        .then(() => deferred.resolve(db))
+        .catch((error) => deferred.reject(error));
     };
+
+    return deferred.promise;
   };
 
-  // Function to retrieve data from IndexedDB by key
+  function createObjectStores(db) {
+    var deferred = $q.defer();
+    var promises = [];
+
+    // Checking and creating objectStore for users
+    if (!db.objectStoreNames.contains("users")) {
+      const userStore = db.createObjectStore("users", { keyPath: "username" });
+      promises.push(createIndexes(userStore, ["id", "email"]));
+    }
+
+    // Checking and creating objectStore for cars
+    if (!db.objectStoreNames.contains("cars")) {
+      const carStore = db.createObjectStore("cars", { keyPath: "number" });
+      promises.push(createIndexes(carStore, ["id"]));
+    }
+
+    // Checking and creating objectStore for bookings
+    if (!db.objectStoreNames.contains("bookings")) {
+      const bookingStore = db.createObjectStore("bookings", {
+        keyPath: "id",
+      });
+      promises.push(createIndexes(bookingStore, ["id", "uid", "cid"]));
+    }
+
+    $q.all(promises)
+      .then(() => deferred.resolve())
+      .catch((error) => deferred.reject(error));
+
+    return deferred.promise;
+  }
+
+  function createIndexes(store, indexNames) {
+    var deferred = $q.defer();
+    var createIndexPromises = indexNames.map(function (indexName) {
+      return $q(function (resolve, reject) {
+        const index = store.createIndex(indexName, indexName, { unique: false });
+        index.onsuccess = function (event) {
+          resolve();
+        };
+        index.onerror = function (event) {
+          reject(event.target.error);
+        };
+      });
+    });
+
+    $q.all(createIndexPromises)
+      .then(() => deferred.resolve())
+      .catch((error) => deferred.reject(error));
+
+    return deferred.promise;
+  }
+
   this.getByKey = function (key, objectStore, indexName = null) {
-    // Implementation...
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open("carRental", 1);
+    var deferred = $q.defer();
+    const request = indexedDB.open("carRental", 1);
 
-      request.onsuccess = (event) => {
-        const db = event.target.result;
+    request.onsuccess = function (event) {
+      const db = event.target.result;
 
-        if (!db.objectStoreNames.contains(objectStore)) {
-          resolve({ email: "", username: "" });
-          return;
-        }
+      if (!db.objectStoreNames.contains(objectStore)) {
+        deferred.resolve({ email: "", username: "" });
+        return;
+      }
 
-        const transaction = db.transaction(objectStore, "readonly");
-        const data = transaction.objectStore(objectStore);
+      const transaction = db.transaction(objectStore, "readonly");
+      const data = transaction.objectStore(objectStore);
 
-        let request;
-        if (indexName) {
-          // If an indexName is provided, use it to query by email
-          const index = data.index(indexName);
-          request = index.get(key);
-        } else {
-          // Otherwise, query by key
-          request = data.get(key);
-        }
+      let getRequest;
+      if (indexName) {
+        const index = data.index(indexName);
+        getRequest = index.get(key);
+      } else {
+        getRequest = data.get(key);
+      }
 
-        request.onsuccess = (event) => {
-          resolve(event.target.result);
-        };
-
-        request.onerror = (event) => {
-          reject(event.target.error);
-        };
+      getRequest.onsuccess = function (event) {
+        deferred.resolve(event.target.result);
       };
 
-      request.onerror = (event) => {
-        reject(event.target.error);
+      getRequest.onerror = function (event) {
+        deferred.reject(event.target.error);
       };
+    };
 
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
+    request.onerror = function (event) {
+      deferred.reject(event.target.error);
+    };
 
-        // If you need to create or upgrade object stores, do it here
-        // For example:
-        if (!db.objectStoreNames.contains(objectStore)) {
-          db.createObjectStore(objectStore, { keyPath: "username" });
-        }
-      };
-    });
+    return deferred.promise;
   };
 
-  // Function to add or update data in IndexedDB
   this.addToDB = function (data, objectStore, key, operation = "add") {
-    // Implementation...
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open("carRental", 1);
+    var deferred = $q.defer();
+    const request = indexedDB.open("carRental", 1);
 
-      request.onsuccess = (event) => {
-        console.log("Success...");
-        const db = event.target.result;
+    request.onsuccess = function (event) {
+      const db = event.target.result;
+      const transaction = db.transaction(objectStore, "readwrite");
+      const store = transaction.objectStore(objectStore);
 
-        const transaction = db.transaction(objectStore, "readwrite");
-        const store = transaction.objectStore(objectStore);
+      let addRequest;
+      if (operation === "put") {
+        addRequest = store.put(data);
+      } else {
+        addRequest = store.add(data);
+      }
 
-        let addRequest;
-        if (operation === "put") {
-          addRequest = store.put(data);
-        } else {
-          addRequest = store.add(data);
-        }
-
-        transaction.oncomplete = () => {
-          console.log(transaction);
-          resolve(data);
-        };
-
-        transaction.onerror = (event) => {
-          reject(console.error("Transaction error:", event.target.error));
-        };
-
-        addRequest.onerror = (event) => {
-          // Handle addRequest errors separately if needed
-          console.error("Error adding:", event.target.error);
-        };
+      transaction.oncomplete = function () {
+        deferred.resolve(data);
       };
 
-      request.onerror = (event) => {
-        reject(console.error("Error opening IndexedDB:", event.target.error));
+      transaction.onerror = function (event) {
+        deferred.reject(event.target.error);
       };
-    });
+
+      addRequest.onerror = function (event) {
+        console.error("Error adding:", event.target.error);
+      };
+    };
+
+    request.onerror = function (event) {
+      deferred.reject(event.target.error);
+    };
+
+    return deferred.promise;
   };
 
-  // Function to retrieve all documents from an object store in IndexedDB
   this.getAllDocuments = function (objectStoreName) {
-    // Implementation...
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open("carRental", 1);
+    var deferred = $q.defer();
+    const request = indexedDB.open("carRental", 1);
 
-      request.onsuccess = (event) => {
-        const db = event.target.result;
+    request.onsuccess = function (event) {
+      const db = event.target.result;
 
-        if (!db.objectStoreNames.contains(objectStoreName)) {
-          reject(new Error(`Object store '${objectStoreName}' not found.`));
-          return;
-        }
+      if (!db.objectStoreNames.contains(objectStoreName)) {
+        deferred.reject(new Error(`Object store '${objectStoreName}' not found.`));
+        return;
+      }
 
-        const transaction = db.transaction(objectStoreName, "readonly");
-        const objectStore = transaction.objectStore(objectStoreName);
-        const getAllRequest = objectStore.getAll();
+      const transaction = db.transaction(objectStoreName, "readonly");
+      const objectStore = transaction.objectStore(objectStoreName);
+      const getAllRequest = objectStore.getAll();
 
-        getAllRequest.onsuccess = (event) => {
-          const documents = event.target.result;
-          resolve(documents);
-        };
-
-        getAllRequest.onerror = (event) => {
-          reject(event.target.error);
-        };
+      getAllRequest.onsuccess = function (event) {
+        const documents = event.target.result;
+        deferred.resolve(documents);
       };
 
-      request.onerror = (event) => {
-        reject(event.target.error);
+      getAllRequest.onerror = function (event) {
+        deferred.reject(event.target.error);
       };
-    });
+    };
+
+    request.onerror = function (event) {
+      deferred.reject(event.target.error);
+    };
+
+    return deferred.promise;
+  };
+
+  this.getAllDocumentsByIndexValue = function (indexName, indexValue) {
+    const deferred = $q.defer();
+
+    const request = indexedDB.open("carRental", 1);
+
+    request.onsuccess = function (event) {
+      const db = event.target.result;
+
+      const transaction = db.transaction("bookings", "readonly");
+      const objectStore = transaction.objectStore("bookings");
+      const index = objectStore.index(indexName); // Use the provided index name
+
+      const getAllRequest = index.getAll(indexValue); // Retrieve all documents with the specified index value
+
+      getAllRequest.onsuccess = function (event) {
+        const documents = event.target.result;
+        deferred.resolve(documents); // Resolve with all documents based on the value of the index
+      };
+
+      getAllRequest.onerror = function (event) {
+        deferred.reject(event.target.error); // Reject if there's an error fetching documents
+      };
+    };
+
+    request.onerror = function (event) {
+      deferred.reject(event.target.error); // Reject if there's an error opening IndexedDB
+    };
+
+    return deferred.promise;
   };
 });

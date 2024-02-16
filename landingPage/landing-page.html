@@ -48,11 +48,11 @@
       <h2 class="section-title">Available Cars</h2>
       <div class="cars-section">
         <div id="available-cars">
-          <div class="car-card" ng-repeat="car in availableCars">
-            <img ng-src="{{car.image}}" alt="{{car.name}}" />
-            <p><strong>Name:</strong> {{car.name}}</p>
-            <p><strong>Model:</strong> {{car.model}}</p>
-            <p><strong>Year:</strong> {{car.year}}</p>
+          <div class="car-card" ng-repeat="car in availableCars" ng-if="$index >= ((currentPage - 1) * carsPerPage) && $index < (currentPage * carsPerPage)">
+            <img ng-src="{{car.image}}" alt="{{car.carName}}" />
+            <p><strong>Name:</strong> {{car.carName}}</p>
+            <p><strong>Model:</strong> {{car.carModel}}</p>
+            <p><strong>Year:</strong> {{car.carYear}}</p>
             <p><strong>Rent Amount:</strong> {{car.rentAmount}} per day</p>
             <button ng-click="openRentNowModal(car)">Rent Now</button>
           </div>
@@ -67,24 +67,24 @@
     </div>
 
     <!-- Modal for Rent Now -->
-    <div id="rent-now-modal" class="modal" ng-show="showRentModal">
+    <div class="rent-modal" ng-show="showRentModal">
       <div class="modal-content">
         <span class="close" ng-click="closeRentNowModal()">&times;</span>
         <h2>Rent Now</h2>
         <label for="rent-start-date">Start Date:</label>
-        <input type="date" id="rent-start-date" ng-model="rentStartDate" required />
+        <input type="date" id="rent-start-date" ng-model="startDate" required ng-change="onRentDateChange()" />
 
         <label for="rent-end-date">End Date:</label>
-        <input type="date" id="rent-end-date" ng-model="rentEndDate" required />
+        <input type="date" id="rent-end-date" ng-model="endDate" required ng-change="onRentDateChange()" />
+        <p class="error-message" ng-show="dateError">Invalid dates.</p>
         <p class="error-message" ng-show="availabilityError">Car is not available for the selected period.</p>
 
-        <p>Your Car: {{selectedCar.name}} {{selectedCar.model}}</p>
-        <p>Total Rent: {{totalRent}}</p>
+        <p>Your Car: {{selectedCar.carName}} {{selectedCar.carModel}}</p>
+        <p ng-show="!availabilityError && !dateError">Total Rent: {{totalRent}}</p>
 
         <button ng-click="confirmRentNow()">Rent Now</button>
       </div>
     </div>
-
     <div id="password-toast" class="toast" ng-show="showPasswordToast">
       <div class="toast-body">Rent confirmed!</div>
     </div>
