@@ -1,4 +1,4 @@
-app.controller("landingPageController", function ($scope, indexedDBService, DatesService, CarAvailabilityService, $timeout) {
+app.controller("landingPageController", function ($scope, indexedDBService, DatesService, CarAvailabilityService, $timeout, $location) {
   // Initialization
   $scope.dateError = false;
   $scope.availableCars = [];
@@ -95,7 +95,7 @@ app.controller("landingPageController", function ($scope, indexedDBService, Date
           $scope.showToast = false;
           $scope.checkCarAvailability();
           $scope.closeRentNowModal();
-          window.location.href = "/bookings";
+          $location.path("/bookings");
         }, 2000);
       })
       .catch(function (error) {

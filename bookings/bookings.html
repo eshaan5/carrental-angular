@@ -1,0 +1,79 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/bookings/bookings.css" />
+  <link rel="stylesheet" href="/profile/profile.css" />
+</head>
+<body ng-controller="BookingsController">
+  <nav>
+    <a href="#" class="navbar-brand">
+      <img src="../assets/logo.jpg" alt="Car Rental" />
+    </a>
+    <div class="links">
+      <a href="landingPage.html">Home</a>
+      <a href="#">My Bookings</a>
+      <a href="profile.html">Profile</a>
+      <button ng-click="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <header>
+    <h1>Your Trips</h1>
+    <nav>
+      <ul>
+        <li ng-click="changeTab('ongoing')" ng-class="{ 'highlight': activeTab === 'ongoing' }">Ongoing Trips</li>
+        <li ng-click="changeTab('upcoming')" ng-class="{ 'highlight': activeTab === 'upcoming' }">Upcoming Trips</li>
+        <li ng-click="changeTab('previous')" ng-class="{ 'highlight': activeTab === 'previous' }">Previous Trips</li>
+      </ul>
+    </nav>
+  </header>
+
+  <section ng-show="activeTab === 'upcoming'" id="upcoming-trips">
+    <h2>Upcoming Trips</h2>
+    <div id="upcoming-trips-list">
+      <!-- Display upcoming trips here -->
+      <div class="trip-card" ng-repeat="trip in upcomingTrips">
+        <div ng-bind-html="trip.carDetails"></div>
+        <img ng-src="{{trip.car.image }}" alt="" />
+        <p><strong>Start Date:</strong> {{ getDate(trip.startDate) }}</p>
+        <p><strong>End Date:</strong> {{ getDate(trip.endDate) }}</p>
+        <p><strong>Price:</strong> ₹ {{ trip.totalAmount }}</p>
+        <button ng-click="cancelBooking(trip)">Cancel</button>
+      </div>
+      <p ng-if="upcomingTrips.length === 0">No upcoming trips available.</p>
+    </div>
+    <div id="toast" ng-show="showToast">
+      <div class="">Booking deleted!</div>
+    </div>
+  </section>
+
+  <section ng-show="activeTab === 'previous'" id="previous-trips">
+    <h2>Previous Trips</h2>
+    <div id="previous-trips-list">
+      <!-- Display previous trips here -->
+      <div class="trip-card" ng-repeat="trip in previousTrips">
+        <div ng-bind-html="trip.carDetails"></div>
+        <img ng-src="{{trip.car.image }}" alt="" />
+        <p><strong>Start Date:</strong> {{ getDate(trip.startDate) }}</p>
+        <p><strong>End Date:</strong> {{ getDate(trip.endDate) }}</p>
+        <p><strong>Price:</strong> ₹ {{ trip.totalAmount }}</p>
+      </div>
+      <p ng-if="previousTrips.length === 0">No previous trips available.</p>
+    </div>
+  </section>
+
+  <section ng-show="activeTab === 'ongoing'" id="ongoing-trips">
+    <h2>Ongoing Trips</h2>
+    <div id="ongoing-trips-list">
+      <!-- Display ongoing trips here -->
+      <div class="trip-card" ng-repeat="trip in ongoingTrips">
+        <div ng-bind-html="trip.carDetails"></div>
+        <img ng-src="{{trip.car.image }}" alt="" />
+        <p><strong>Start Date:</strong> {{ getDate(trip.startDate) }}</p>
+        <p><strong>End Date:</strong> {{ getDate(trip.endDate) }}</p>
+        <p><strong>Price:</strong> ₹ {{ trip.totalAmount }}</p>
+      </div>
+    </div>
+    <p ng-if="ongoingTrips.length === 0">No ongoing trips available.</p>
+  </section>
+</body>

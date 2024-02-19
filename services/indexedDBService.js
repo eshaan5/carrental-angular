@@ -115,6 +115,41 @@ app.service("indexedDBService", function ($q) {
     return deferred.promise;
   };
 
+  this.getAllDocumentsByIndex = function (indexName, indexValue, objectStoreName) {
+    const deferred = $q.defer();
+
+    const request = indexedDB.open("carRental", 1);
+
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains(objectStoreName)) {
+        deferred.reject(new Error(`Object store '${objectStoreName}' not found.`));
+        return;
+      }
+
+      const transaction = db.transaction(objectStoreName, "readonly");
+      const objectStore = transaction.objectStore(objectStoreName);
+      const index = objectStore.index(indexName);
+      const getAllRequest = index.getAll(indexValue);
+
+      getAllRequest.onsuccess = (event) => {
+        const documents = event.target.result;
+        deferred.resolve(documents);
+      };
+
+      getAllRequest.onerror = (event) => {
+        deferred.reject(event.target.error);
+      };
+    };
+
+    request.onerror = (event) => {
+      deferred.reject(event.target.error);
+    };
+
+    return deferred.promise;
+  };
+
   this.addToDB = function (data, objectStore, key, operation = "add") {
     var deferred = $q.defer();
     const request = indexedDB.open("carRental", 1);

@@ -24,6 +24,10 @@ app.config([
         templateUrl: "/profile/profile.html",
         controller: "ProfileController",
       })
+      .when("/bookings", {
+        templateUrl: "/bookings/bookings.html",
+        controller: "BookingsController",
+      })
       .otherwise({
         redirectTo: "/",
       });
