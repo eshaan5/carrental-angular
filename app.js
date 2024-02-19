@@ -20,6 +20,10 @@ app.config([
         templateUrl: "addCar/add-car.html",
         controller: "addCarController",
       })
+      .when("/profile", {
+        templateUrl: "/profile/profile.html",
+        controller: "ProfileController",
+      })
       .otherwise({
         redirectTo: "/",
       });

@@ -1,0 +1,58 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/profile/profile.css" />
+</head>
+<body ng-controller="ProfileController">
+  <nav>
+    <a href="#" class="navbar-brand">
+      <img src="../assets/logo.jpg" alt="Car Rental" />
+    </a>
+    <div id="links">
+      <a href="landingPage.html">Home</a>
+      <a href="bookings.html">My Bookings</a>
+      <a href=""></a>
+      <a href="">Profile</a>
+      <button ng-click="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div id="profile-container">
+    <h2>User Profile</h2>
+    <h3 id="welcome-message">{{ welcomeMessage }}</h3>
+
+    <div id="user-details">
+      <p><i class="fa-solid fa-user"></i> <span>{{ user.username }}</span></p>
+      <p><i class="fa-solid fa-envelope"></i> <span>{{ user.email }}</span></p>
+      <p><i class="fa-solid fa-phone"></i> <span>{{ user.phone }}</span></p>
+    </div>
+
+    <button ng-click="showChangePasswordForm()"><i class="fa-solid fa-pen-to-square"></i> Change Password</button>
+  </div>
+
+  <div id="change-password-form" ng-show="showPasswordForm">
+    <div class="modal-content">
+      <span class="close" ng-click="closePasswordForm()">&times;</span>
+      <h3>Change Password</h3>
+      <form name="changePassword" id="password-form" ng-submit="submitForm()">
+        <label for="current-password">Current Password:</label>
+        <input type="password" id="current-password" ng-model="currentPassword" placeholder="Current Password" required />
+
+        <label for="new-password">New Password:</label>
+
+        <input type="password" id="new-password" placeholder="New Password" ng-model="newPassword" required name="password" ng-pattern="/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+<>?])[A-Za-z\d!@#$%^&*()_+<>?]{8,}$/" />
+        <p class="error-message" ng-show="changePassword.password.$error.pattern && changePassword.password.$dirty">Password should contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number and one special character.</p>
+
+        <label for="confirm-new-password">Confirm New Password:</label>
+        <input type="password" id="confirm-new-password" ng-model="confirmPassword" placeholder="Confirm New Password" required />
+
+        <button type="submit">Submit</button>
+        <p class="error-message">{{ passwordChangeError }}</p>
+      </form>
+    </div>
+  </div>
+
+  <div id="password-toast" ng-show="showToast">
+    <div class="toast-body">Password changed successfully!</div>
+  </div>
+</body>
