@@ -37,8 +37,6 @@
             <label for="end-date">End Date:</label>
             <input class="search-input" type="date" id="end-date" ng-change="verifyDates()" ng-model="endDate" required />
           </div>
-
-          <button class="search-btn" ng-click="checkCarAvailability()">Check Availability</button>
         </div>
         <p class="error-message" ng-show="dateError">Invalid dates.</p>
       </div>
@@ -53,8 +51,8 @@
             <p><strong>Name:</strong> {{car.carName}}</p>
             <p><strong>Model:</strong> {{car.carModel}}</p>
             <p><strong>Year:</strong> {{car.carYear}}</p>
-            <p><strong>Rent Amount:</strong> {{car.rentAmount}} per day</p>
-            <button ng-click="openRentNowModal(car)">Rent Now</button>
+            <p><strong>Rent Amount:</strong> ₹ {{car.rentAmount}} per day</p>
+            <button class="search-btn" ng-click="openRentNowModal(car)">Rent Now</button>
           </div>
           <p ng-if="availableCars.length === 0">No cars available for the selected period.</p>
         </div>
@@ -80,13 +78,13 @@
         <p class="error-message" ng-show="availabilityError">Car is not available for the selected period.</p>
 
         <p>Your Car: {{selectedCar.carName}} {{selectedCar.carModel}}</p>
-        <p ng-show="!availabilityError && !dateError">Total Rent: {{totalRent}}</p>
+        <p ng-show="!availabilityError && !dateError">Total Rent: ₹ {{totalRent}}</p>
 
         <button ng-click="confirmRentNow()">Rent Now</button>
       </div>
     </div>
-    <div id="password-toast" class="toast" ng-show="showPasswordToast">
-      <div class="toast-body">Rent confirmed!</div>
+    <div id="toast" ng-show="showToast">
+      <div class="">Booking confirmed!</div>
     </div>
   </section>
 

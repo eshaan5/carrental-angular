@@ -12,8 +12,7 @@ form {
 }
 
 #availability-checker,
-#available-cars,
-.cars-section {
+#available-cars {
   max-width: 80vw;
   margin: 50px auto;
   background: #ffffff81;
@@ -201,7 +200,7 @@ button:hover {
   font-weight: bold;
 }
 
-#password-toast {
+#toast {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -209,26 +208,7 @@ button:hover {
   color: #fff;
   padding: 15px;
   border-radius: 5px;
-  display: none;
   z-index: 1;
-}
-
-#password-toast.show {
-  display: block;
-  animation: fadeOut 5s ease-in-out forwards;
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    display: none;
-  }
 }
 
 body,
@@ -310,7 +290,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: url("images/img_depth6frame0.png") no-repeat center/cover;
   padding: 20px;
   border-radius: 12px;
 }
@@ -337,6 +316,7 @@ body {
   display: flex;
   align-items: center;
   gap: 20px;
+  padding-right: 5rem;
 }
 
 .search-icon {

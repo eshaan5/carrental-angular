@@ -1,21 +1,24 @@
-app.controller("landingPageController", function ($scope, indexedDBService, DatesService, CarAvailabilityService) {
+app.controller("landingPageController", function ($scope, indexedDBService, DatesService, CarAvailabilityService, $timeout) {
   // Initialization
   $scope.dateError = false;
   $scope.availableCars = [];
   $scope.showRentModal = false;
   $scope.currentPage = 1;
-  $scope.carsPerPage = 1;
+  $scope.carsPerPage = 5;
   $scope.startDate = new Date();
   $scope.endDate = DatesService.tomorrowsDate();
   $scope.maxPage = 1;
+  $scope.showToast = false;
 
   $scope.verifyDates = function () {
     $scope.dateError = DatesService.verifyDate($scope.startDate, $scope.endDate, new Date());
+    $scope.checkCarAvailability();
   };
 
   $scope.checkCarAvailability = function () {
     // Perform validation
     if ($scope.dateError) {
+      $scope.availableCars = [];
       return;
     }
 
@@ -30,6 +33,7 @@ app.controller("landingPageController", function ($scope, indexedDBService, Date
         $scope.maxPage = Math.ceil($scope.availableCars.length / $scope.carsPerPage);
       });
   };
+  $scope.checkCarAvailability();
 
   $scope.changePage = function (change) {
     $scope.currentPage += change;
@@ -67,8 +71,11 @@ app.controller("landingPageController", function ($scope, indexedDBService, Date
       return;
     }
 
+    var hours = new Date().getHours();
+    var minutes = new Date().getMinutes();
+
     var bookingObject = {
-      id: 1,
+      id: uuidv4(),
       startDate: $scope.rentStartDate,
       endDate: $scope.rentEndDate,
       user: user,
@@ -76,18 +83,20 @@ app.controller("landingPageController", function ($scope, indexedDBService, Date
       cid: $scope.selectedCar.number,
       car: $scope.selectedCar,
       totalAmount: $scope.totalRent,
-      // bookingDate: currentDate,
-      // bookingTime: currentTime,
+      bookingDate: new Date().toISOString().split("T")[0],
+      bookingTime: hours + ":" + minutes,
     };
 
     indexedDBService
       .addToDB(bookingObject, "bookings", bookingObject.id)
       .then(function (bookingId) {
-        $scope.showPasswordToast = true;
-        $scope.closeRentNowModal();
-      })
-      .then(function () {
-        window.location.href = "#/bookings";
+        $scope.showToast = true;
+        $timeout(function () {
+          $scope.showToast = false;
+          $scope.checkCarAvailability();
+          $scope.closeRentNowModal();
+          window.location.href = "/bookings";
+        }, 2000);
       })
       .catch(function (error) {
         console.error("Error confirming rent:", error);
@@ -101,7 +110,7 @@ app.controller("landingPageController", function ($scope, indexedDBService, Date
     $scope.totalRent = 0;
 
     if ($scope.dateError) {
-      $scope.totalRent = 0
+      $scope.totalRent = 0;
       return;
     }
 
@@ -118,13 +127,6 @@ app.controller("landingPageController", function ($scope, indexedDBService, Date
 
   $scope.onRentDateChange = function () {
     $scope.verifyDates();
-    if (!$scope.dateError)
-    $scope.updateRent();
+    if (!$scope.dateError) $scope.updateRent();
   };
-
-  $scope.logout = function () {
-    // Your logout logic here
-  };
-
-  // Other functions and variables...
 });
