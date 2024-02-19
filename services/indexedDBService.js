@@ -218,35 +218,4 @@ app.service("indexedDBService", function ($q) {
 
     return deferred.promise;
   };
-
-  this.getAllDocumentsByIndexValue = function (indexName, indexValue) {
-    const deferred = $q.defer();
-
-    const request = indexedDB.open("carRental", 1);
-
-    request.onsuccess = function (event) {
-      const db = event.target.result;
-
-      const transaction = db.transaction("bookings", "readonly");
-      const objectStore = transaction.objectStore("bookings");
-      const index = objectStore.index(indexName); // Use the provided index name
-
-      const getAllRequest = index.getAll(indexValue); // Retrieve all documents with the specified index value
-
-      getAllRequest.onsuccess = function (event) {
-        const documents = event.target.result;
-        deferred.resolve(documents); // Resolve with all documents based on the value of the index
-      };
-
-      getAllRequest.onerror = function (event) {
-        deferred.reject(event.target.error); // Reject if there's an error fetching documents
-      };
-    };
-
-    request.onerror = function (event) {
-      deferred.reject(event.target.error); // Reject if there's an error opening IndexedDB
-    };
-
-    return deferred.promise;
-  };
 });

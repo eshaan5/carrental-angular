@@ -28,11 +28,13 @@ app.controller("addCarController", function ($scope, $location, indexedDBService
     // Handle form submission here
 
     $scope.formData.isDeleted = false;
+    var carIsPresent = false;
 
     indexedDBService
       .getByKey($scope.formData.number, "cars")
       .then((car) => {
         if (car) {
+          if (car.isDeleted) carIsPresent = true;
           $scope.plateNumberExists = true;
           $scope.addCar.$invalid = true;
           $scope.$apply();
@@ -43,6 +45,7 @@ app.controller("addCarController", function ($scope, $location, indexedDBService
           return;
         }
 
+        if (carIsPresent) return indexedDBService.addToDB($scope.formData, "cars", $scope.formData.number, "put");
         return indexedDBService.addToDB($scope.formData, "cars", $scope.formData.number);
       })
       .then((car) => {

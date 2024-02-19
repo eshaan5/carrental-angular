@@ -1,0 +1,58 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/admin/admin.css">
+    <link rel="stylesheet" href="/landingPage/landing-page.css">
+    <!-- Other meta tags and stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body ng-controller="AdminController">
+<nav>
+    <a href="#" class="navbar-brand">
+        <img src="../assets/logo.jpg" alt="Car Rental">
+    </a>
+    <div class="links">
+        <a href="">Home</a>
+        <a href="analytics.html">Analysis</a>
+        <a href="carRegistration.html">Add Car</a>
+        <a href="profile.html">Profile</a>
+        <button ng-click="logout()">Logout</button>
+    </div>
+</nav>
+
+<section id="cars-container">
+    <div class="car-card" ng-repeat="car in cars">
+        <img ng-src="{{car.image}}" alt="{{car.name}}">
+        <div class="car-details">
+            <p><strong>Number:</strong> {{car.number}}</p>
+            <p><strong>Name:</strong> {{car.name}}</p>
+            <p><strong>Model:</strong> {{car.model}}</p>
+            <p><strong>Year:</strong> {{car.year}}</p>
+            <p><strong>Rent Amount:</strong> ₹{{car.rentAmount}} per day</p>
+        </div>
+        <div class="action-icons">
+            <i class="fas fa-edit" ng-click="openCarUpdateModal(car.number)"></i>
+            <i class="fas fa-trash-alt" ng-click="deleteCar(car)"></i>
+        </div>
+        <button class="show-bookings-btn" ng-click="showBookings(car.number)">Show Bookings</button>
+    </div>
+</section>
+
+<div id="car-update-modal" class="modal" ng-show="showCarUpdateModal">
+    <!-- Car update modal content -->
+</div>
+
+<div id="bookings-modal" class="modal" ng-show="showBookingsModal">
+    <!-- Bookings modal content -->
+</div>
+
+<div id="password-toast" class="toast" ng-show="showPasswordToast">
+    <div class="toast-body">Car details updated successfully!</div>
+</div>
+
+<script src="../js/util.js"></script>
+<script src="../js/indexeddb.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>
