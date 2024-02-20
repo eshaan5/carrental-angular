@@ -1,58 +1,73 @@
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/admin/admin.css">
-    <link rel="stylesheet" href="/landingPage/landing-page.css">
-    <!-- Other meta tags and stylesheets -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/admin/admin.css" />
+  <link rel="stylesheet" href="/landingPage/landing-page.css" />
+  <!-- Other meta tags and stylesheets -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 <body ng-controller="AdminController">
-<nav>
+  <nav>
     <a href="#" class="navbar-brand">
-        <img src="../assets/logo.jpg" alt="Car Rental">
+      <img src="../assets/logo.jpg" alt="Car Rental" />
     </a>
     <div class="links">
-        <a href="">Home</a>
-        <a href="analytics.html">Analysis</a>
-        <a href="carRegistration.html">Add Car</a>
-        <a href="profile.html">Profile</a>
-        <button ng-click="logout()">Logout</button>
+      <a href="">Home</a>
+      <a href="analytics.html">Analysis</a>
+      <a href="carRegistration.html">Add Car</a>
+      <a href="profile.html">Profile</a>
+      <button ng-click="logout()">Logout</button>
     </div>
-</nav>
+  </nav>
 
-<section id="cars-container">
+  <section id="cars-container">
     <div class="car-card" ng-repeat="car in cars">
-        <img ng-src="{{car.image}}" alt="{{car.name}}">
-        <div class="car-details">
-            <p><strong>Number:</strong> {{car.number}}</p>
-            <p><strong>Name:</strong> {{car.name}}</p>
-            <p><strong>Model:</strong> {{car.model}}</p>
-            <p><strong>Year:</strong> {{car.year}}</p>
-            <p><strong>Rent Amount:</strong> ₹{{car.rentAmount}} per day</p>
-        </div>
-        <div class="action-icons">
-            <i class="fas fa-edit" ng-click="openCarUpdateModal(car.number)"></i>
-            <i class="fas fa-trash-alt" ng-click="deleteCar(car)"></i>
-        </div>
-        <button class="show-bookings-btn" ng-click="showBookings(car.number)">Show Bookings</button>
+      <img ng-src="{{car.image}}" alt="{{car.name}}" />
+      <div class="car-details">
+        <p><strong>Number:</strong> {{car.number}}</p>
+        <p><strong>Name:</strong> {{car.carName}}</p>
+        <p><strong>Model:</strong> {{car.carModel}}</p>
+        <p><strong>Year:</strong> {{car.carYear}}</p>
+        <p><strong>Rent Amount:</strong> ₹{{car.rentAmount}} per day</p>
+      </div>
+      <div class="action-icons">
+        <i class="fas fa-edit" ng-click="openCarUpdateModal(car.number)"></i>
+        <i class="fas fa-trash-alt" ng-click="deleteCar(car)"></i>
+      </div>
+      <button class="show-bookings-btn" ng-click="showBookings(car.number)">Show Bookings</button>
     </div>
-</section>
+  </section>
 
-<div id="car-update-modal" class="modal" ng-show="showCarUpdateModal">
-    <!-- Car update modal content -->
-</div>
+  <!-- Existing code -->
 
-<div id="bookings-modal" class="modal" ng-show="showBookingsModal">
-    <!-- Bookings modal content -->
-</div>
+  <div id="car-update-modal" class="show-modal" ng-show="showCarUpdateModal">
+    <div class="modal-content">
+      <span class="close" ng-click="closeCarUpdateModal()">&times;</span>
+      <h2>Update Car Details</h2>
+      <form name="updateCar" ng-submit="updateDetails()">
+        <label for="new-image">New Image URL:</label>
+        <input type="file" id="new-image" onchange="angular.element(this).scope().uploadImage(this.files)" />
+        <label for="new-rent">New Rent Amount:</label>
+        <input type="text" name="rentAmount" ng-pattern="/^\d{1,5}$/" id="rentAmount" ng-model="newRent" placeholder="Enter rent amount" />
+        <p class="error-message" ng-show="updateCar.rentAmount.$error.pattern && updateCar.rentAmount.$dirty">Enter valid amount.</p>
+        <button type="submit">Update Car</button>
+      </form>
+    </div>
+  </div>
 
-<div id="password-toast" class="toast" ng-show="showPasswordToast">
+  <div id="bookings-modal" class="show-modal" ng-show="showBookingsModal">
+    <div class="modal-content">
+      <span class="close" ng-click="closeBookingsModal()">&times;</span>
+      <h2>Car Bookings</h2>
+      <div id="bookings-list">
+        <p ng-repeat="booking in bookings">Start Date: {{booking.startDate | date:'dd MMM yyyy'}}, End Date: {{booking.endDate | date:'dd MMM yyyy'}}, Total Amount: ₹{{booking.totalAmount}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Existing code -->
+
+  <div id="toast" ng-show="showPasswordToast">
     <div class="toast-body">Car details updated successfully!</div>
-</div>
-
-<script src="../js/util.js"></script>
-<script src="../js/indexeddb.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
-<script src="../js/admin.js"></script>
+  </div>
 </body>
-</html>

@@ -43,8 +43,7 @@ button:hover {
   background-color: #555;
 }
 
-.modal {
-  display: none;
+.show-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -73,7 +72,7 @@ button:hover {
   color: black;
 }
 
-#password-toast {
+#toast {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -81,11 +80,10 @@ button:hover {
   color: #fff;
   padding: 15px;
   border-radius: 5px;
-  display: none;
   z-index: 1;
 }
 
-#password-toast.show {
+#toast.show {
   display: block;
   animation: fadeOut 5s ease-in-out forwards;
 }

@@ -35,17 +35,22 @@ app.controller("addCarController", function ($scope, $location, indexedDBService
       .then((car) => {
         if (car) {
           if (car.isDeleted) carIsPresent = true;
-          $scope.plateNumberExists = true;
-          $scope.addCar.$invalid = true;
-          $scope.$apply();
-          return;
+          else {
+            $scope.plateNumberExists = true;
+            $scope.addCar.$invalid = true;
+            $scope.$apply();
+            return;
+          }
         }
 
         if ($scope.addCar.$invalid) {
           return;
         }
 
-        if (carIsPresent) return indexedDBService.addToDB($scope.formData, "cars", $scope.formData.number, "put");
+        if (carIsPresent) {
+          $scope.formData.isDeleted = false;
+          return indexedDBService.addToDB($scope.formData, "cars", $scope.formData.number, "put");
+        }
         return indexedDBService.addToDB($scope.formData, "cars", $scope.formData.number);
       })
       .then((car) => {
