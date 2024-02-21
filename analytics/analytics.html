@@ -1,0 +1,105 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics Page</title>
+  <link rel="stylesheet" href="/analytics/analytics.css" />
+</head>
+<body ng-controller="AnalyticsController">
+  <nav>
+    <a href="#" class="navbar-brand">
+      <img src="../assets/logo.jpg" alt="Car Rental" />
+    </a>
+    <div class="links">
+      <a href="admin.html">Home</a>
+      <a href="">Analysis</a>
+      <a href="carRegistration.html">Add Car</a>
+      <a href="profile.html">Profile</a>
+      <button ng-click="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div id="date-container">
+    <div class="dates">
+      <label for="start-date">Start Date:</label>
+      <input type="date" id="start-date" ng-model="startDate" ng-change="verifyDates()" required />
+      <label for="end-date">End Date:</label>
+      <input type="date" id="end-date" ng-model="endDate" ng-change="verifyDates()" required />
+    </div>
+    <p class="error-message" ng-show="dateError">Invalid Dates!</p>
+  </div>
+
+  <div id="secondary-container">
+    <h2>Day Wise Bookings</h2>
+    <canvas id="day-wise-chart" style="background-color: #fff; width: 50%; height: 400px; padding: 1rem"></canvas>
+  </div>
+
+  <div id="main-container" ng-show="showMainContainer" style="display: flex; flex-direction: column; flex-wrap: wrap; margin-top: 20px">
+    <div id="top" style="width: 50%; display: flex; gap: 50px">
+      <div id="top-left-section">
+        <h2>Business per Day</h2>
+        <canvas id="bookings-chart" style="background-color: #fff; width: 50%; height: 400px; padding: 1rem"></canvas>
+      </div>
+      <div id="top-right-section" style="display: flex">
+        <div class="top-card">
+          <h3>Total Revenue:</h3>
+          <p>{{ totalRevenue }}</p>
+        </div>
+        <div class="top-card">
+          <h3>Total Logins:</h3>
+          <p>{{ totalLogins }}</p>
+        </div>
+        <div class="top-card">
+          <h3>Total Signups:</h3>
+          <p>{{ totalSignups }}</p>
+        </div>
+        <div class="top-card">
+          <h3>Conversion Rate:</h3>
+          <p>{{ conversionRate }} %</p>
+        </div>
+      </div>
+    </div>
+    <div id="bottom">
+      <div id="bottom-left-section">
+        <div id="top-users">
+          <h2>Top Users</h2>
+          <table id="top-users-table">
+            <tr>
+              <th>User</th>
+              <th>Total Revenue</th>
+            </tr>
+            <tr ng-repeat="user in topUsers">
+              <td>{{ user.username }}</td>
+              <td>{{ user.totalRevenue }}</td>
+            </tr>
+          </table>
+        </div>
+        <div id="top-cars">
+          <h2>Top Cars</h2>
+          <table id="top-cars-table">
+            <tr>
+              <th>Car</th>
+              <th>Total Bookings</th>
+            </tr>
+            <tr ng-repeat="car in topCars">
+              <td>{{ car.name }} {{ car.model }}</td>
+              <td>{{ car.totalBookings }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div id="bottom-right-section">
+        <h2>Company Wise Bookings</h2>
+        <canvas height="200" width="100" id="bottom-right" style="background-color: #fff; padding: 0.3rem"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div id="additional-container">
+    <h2>Revenue by Time</h2>
+    <div id="time-input-container">
+      <label for="selected-time">Select Time:</label>
+      <input type="time" id="selected-time" value="12:00" step="1800" ng-model="selectedTime" required />
+    </div>
+    <canvas id="revenue-by-time-chart" style="background-color: #fff; width: 50%; height: 400px; padding: 1rem"></canvas>
+  </div>
+</body>

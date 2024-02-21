@@ -4,10 +4,10 @@ app.config([
   "$routeProvider",
   function ($routeProvider) {
     $routeProvider
-      // .when("/", {
-      //   templateUrl: "./login/login.html",
-      //   controller: "LoginController",
-      // })
+      .when("/analytics", {
+        templateUrl: "./login/login.html",
+        controller: "LoginController",
+      })
       .when("/signup", {
         templateUrl: "/signup/signup.html",
         controller: "SignupController",
@@ -28,9 +28,13 @@ app.config([
         templateUrl: "/bookings/bookings.html",
         controller: "BookingsController",
       })
-      .when("/", {
+      .when("/admin", {
         templateUrl: "/admin/admin.html",
         controller: "AdminController",
+      })
+      .when("/", {
+        templateUrl: "/analytics/analytics.html",
+        controller: "AnalyticsController",
       })
       .otherwise({
         redirectTo: "/",
