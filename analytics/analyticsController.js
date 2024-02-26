@@ -5,7 +5,6 @@ app.controller("AnalyticsController", function ($scope, DatesService, indexedDBS
   $scope.startDate = DatesService.sevenDaysAgo();
   $scope.endDate = new Date();
   //   $scope.selectedTime = "12:00"; // Default value is 12 PM
-  $scope.showMainContainer = false;
   $scope.totalRevenue = 0;
   $scope.totalLogins = 0;
   $scope.totalSignups = 0;
@@ -16,16 +15,25 @@ app.controller("AnalyticsController", function ($scope, DatesService, indexedDBS
   var startDate = $scope.startDate;
   var endDate = $scope.endDate;
 
+  var chartsArray = [];
+
   $scope.verifyDates = function () {
+    chartsArray.forEach(function (chart) {
+      chart.destroy();
+    });
     $scope.dateError = DatesService.verifyAnalyticsDates($scope.startDate, $scope.endDate, new Date());
-    console.log($scope.dateError);
-    if (!$scope.dateError) AnalyticsService.generateAnalytics(startDate, endDate);
+    if (!$scope.dateError) {
+      startDate = $scope.startDate;
+      endDate = $scope.endDate;
+      Promise.all(AnalyticsService.generateCharts(startDate, endDate)).then((results) => {
+        chartsArray = results;
+      });
+    }
   };
 
-  AnalyticsService.generateAnalytics(startDate, endDate)
-  .then(function (data) {
-    console.log(data);
-  })
+  Promise.all(AnalyticsService.generateCharts(startDate, endDate)).then((results) => {
+    chartsArray = results;
+  });
 
   // Define other functions like dayWiseSales, generateBookingsChart, etc. as in the previous JavaScript code
 });
