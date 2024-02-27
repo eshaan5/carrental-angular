@@ -3,7 +3,7 @@ app.controller("LoginController", function ($scope, $location, indexedDBService)
 
   $scope.user = JSON.parse(localStorage.getItem("currentUser"));
   if ($scope.user) {
-    if ($scope.user === "admin") {
+    if ($scope.username === "admin") {
       $location.path("/admin");
     } else {
       $location.path("/landingPage");
@@ -38,7 +38,7 @@ app.controller("LoginController", function ($scope, $location, indexedDBService)
               // Update login timestamp
               user.logins = user.logins + 1;
               indexedDBService.addToDB(user, "users", "username", "put").then(() => {
-                console.log("User logged in:", user);
+                localStorage.setItem("currentUser", JSON.stringify(user));
                 if (user.username === "admin") {
                   $location.path("/admin");
                 } else {

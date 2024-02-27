@@ -1,8 +1,27 @@
-app.controller("AdminController", function ($scope, indexedDBService) {
+app.controller("AdminController", function ($scope, indexedDBService, $location) {
   $scope.showCarUpdateModal = false;
   $scope.showBookingsModal = false;
   $scope.showToast = false;
   $scope.cars = [];
+
+  $scope.user = JSON.parse(localStorage.getItem("currentUser")).username;
+
+  $scope.goTo = function (path) {
+    if (path == "home") {
+      if ($scope.user === "admin") {
+        $location.path("/admin");
+      } else {
+        $location.path("/landingPage");
+      }
+      return;
+    }
+    $location.path(path);
+  };
+
+  $scope.logout = function () {
+    localStorage.removeItem("currentUser");
+    $location.path("/");
+  };
 
   $scope.displayCars = function () {
     indexedDBService
@@ -79,7 +98,6 @@ app.controller("AdminController", function ($scope, indexedDBService) {
   $scope.updateDetails = function () {
     var carNumber = $scope.carToUpdate;
     console.log(carNumber);
-
 
     // Retrieve the car object from IndexedDB
     indexedDBService

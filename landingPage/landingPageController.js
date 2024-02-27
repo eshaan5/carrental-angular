@@ -15,6 +15,15 @@ app.controller("landingPageController", function ($scope, indexedDBService, Date
     $scope.checkCarAvailability();
   };
 
+  $scope.goTo = function (path) {
+    $location.path(path);
+  };
+
+  $scope.logout = function () {
+    localStorage.removeItem("currentUser");
+    $location.path("/");
+  };
+
   $scope.checkCarAvailability = function () {
     // Perform validation
     if ($scope.dateError) {

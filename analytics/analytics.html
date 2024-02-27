@@ -10,10 +10,10 @@
       <img src="../assets/logo.jpg" alt="Car Rental" />
     </a>
     <div class="links">
-      <a href="admin.html">Home</a>
-      <a href="">Analysis</a>
-      <a href="carRegistration.html">Add Car</a>
-      <a href="profile.html">Profile</a>
+      <a ng-click="goTo('home')">Home</a>
+      <!-- <a href="">Analysis</a> -->
+      <a ng-click="goTo('addCar')">Add Car</a>
+      <a ng-click="goTo('profile')">Profile</a>
       <button ng-click="logout()">Logout</button>
     </div>
   </nav>
@@ -45,16 +45,8 @@
           <p>{{ totalRevenue }}</p>
         </div>
         <div class="top-card">
-          <h3>Total Logins:</h3>
-          <p>{{ totalLogins }}</p>
-        </div>
-        <div class="top-card">
           <h3>Total Signups:</h3>
           <p>{{ totalSignups }}</p>
-        </div>
-        <div class="top-card">
-          <h3>Conversion Rate:</h3>
-          <p>{{ conversionRate }} %</p>
         </div>
       </div>
     </div>
@@ -68,8 +60,8 @@
               <th>Total Revenue</th>
             </tr>
             <tr ng-repeat="user in topUsers">
-              <td>{{ user.username }}</td>
-              <td>{{ user.totalRevenue }}</td>
+              <td>{{ user.uid }}</td>
+              <td>{{ user.totalAmount }}</td>
             </tr>
           </table>
         </div>
@@ -81,7 +73,7 @@
               <th>Total Bookings</th>
             </tr>
             <tr ng-repeat="car in topCars">
-              <td>{{ car.name }} {{ car.model }}</td>
+              <td>{{ car.cid }}</td>
               <td>{{ car.totalBookings }}</td>
             </tr>
           </table>
@@ -94,12 +86,12 @@
     </div>
   </div>
 
-  <div id="additional-container">
+  <!-- <div id="additional-container">
     <h2>Revenue by Time</h2>
     <div id="time-input-container">
       <label for="selected-time">Select Time:</label>
       <input type="time" id="selected-time" value="12:00" step="1800" ng-model="selectedTime" required />
     </div>
     <canvas id="revenue-by-time-chart" style="background-color: #fff; width: 50%; height: 400px; padding: 1rem"></canvas>
-  </div>
+  </div> -->
 </body>

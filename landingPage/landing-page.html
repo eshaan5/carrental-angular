@@ -9,16 +9,12 @@
       <img src="/assets/logo.jpg" alt="vectorZero" class="logo-icon" />
       <span class="logo-text">CarRental</span>
     </div>
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="#">Rent</a></li>
-        <li><a href="#">Own</a></li>
-        <li><a href="#">Fleet</a></li>
-        <li><a href="#">About</a></li>
-      </ul>
-      <div class="auth-buttons">
-        <a href="#" class="sign-up-btn">Sign up</a>
-        <a href="#" class="log-in-btn">Log in</a>
+    <nav>
+      <div class="links">
+        <!-- <a href="landingPage.html">Home</a> -->
+        <a ng-click="goTo('bookings')">My Bookings</a>
+        <a ng-click="goTo('profile')">Profile</a>
+        <button ng-click="logout()">Logout</button>
       </div>
     </nav>
   </header>

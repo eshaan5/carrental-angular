@@ -1,4 +1,4 @@
-app.controller("BookingsController", function ($scope, indexedDBService, $timeout) {
+app.controller("BookingsController", function ($scope, indexedDBService, $timeout, $location) {
   if (!localStorage.getItem("currentUser")) {
     // User not logged in, redirect to login page
     window.location.href = "login.html";
@@ -12,6 +12,15 @@ app.controller("BookingsController", function ($scope, indexedDBService, $timeou
 
   $scope.getDate = function (date) {
     return new Date(date).toISOString().split("T")[0];
+  };
+
+  $scope.goTo = function (path) {
+    $location.path(path);
+  };
+
+  $scope.logout = function () {
+    localStorage.removeItem("currentUser");
+    $location.path("/");
   };
 
   // Retrieve the current user from local storage
@@ -33,8 +42,6 @@ app.controller("BookingsController", function ($scope, indexedDBService, $timeou
       $scope.ongoingTrips = bookings.filter(function (booking) {
         return new Date(booking.startDate) <= new Date() && new Date(booking.endDate) >= new Date() && !booking.isCancelled;
       });
-
-      console.log("User bookings loaded successfully:", bookings);
     })
     .catch(function (error) {
       console.error("Error loading user bookings:", error);

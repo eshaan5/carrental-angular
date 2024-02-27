@@ -4,7 +4,7 @@ app.config([
   "$routeProvider",
   function ($routeProvider) {
     $routeProvider
-      .when("/analytics", {
+      .when("/", {
         templateUrl: "./login/login.html",
         controller: "LoginController",
       })
@@ -32,7 +32,7 @@ app.config([
         templateUrl: "/admin/admin.html",
         controller: "AdminController",
       })
-      .when("/", {
+      .when("/analytics", {
         templateUrl: "/analytics/analytics.html",
         controller: "AnalyticsController",
       })
